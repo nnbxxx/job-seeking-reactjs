@@ -46,9 +46,6 @@ export const callUploadSingleFile = (file: any, folderType: string) => {
     });
 }
 
-
-
-
 /**
  * 
 Module Company
@@ -65,7 +62,12 @@ export const callDeleteCompany = (id: string) => {
     return axios.delete<IBackendRes<ICompany>>(`/api/v1/companies/${id}`);
 }
 
+export const callFetchCompanyAdmin = (query: string) => {
+    return axios.post<IBackendRes<IModelPaginate<ICompany>>>(`/api/v1/companies/manager?${query}`);
+    // return axios.get<IBackendRes<IModelPaginate<ICompany>>>(`/api/v1/companies?${query}`);
+}
 export const callFetchCompany = (query: string) => {
+    //return axios.post<IBackendRes<IModelPaginate<ICompany>>>(`/api/v1/companies/manager?${query}`);
     return axios.get<IBackendRes<IModelPaginate<ICompany>>>(`/api/v1/companies?${query}`);
 }
 
@@ -150,6 +152,11 @@ export const callDeleteResume = (id: string) => {
 
 export const callFetchResume = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IResume>>>(`/api/v1/resumes?${query}`);
+    //return axios.post<IBackendRes<IModelPaginate<IResume>>>(`/api/v1/resumes/manager?${query}`);
+}
+export const callFetchResumeAdmin = (query: string) => {
+    // return axios.get<IBackendRes<IModelPaginate<IResume>>>(`/api/v1/resumes?${query}`);
+    return axios.post<IBackendRes<IModelPaginate<IResume>>>(`/api/v1/resumes/manager?${query}`);
 }
 
 export const callFetchResumeById = (id: string) => {
@@ -262,11 +269,15 @@ export const callDeleteSkill = (id: string) => {
 }
 /**
  * 
-Module Resume
+Module Dashboard
  */
 export const callFetchSummary = () => {
     return axios.get('/api/v1/dashboard/jobs');
 }
+
 export const callFetchPie = () => {
     return axios.get('/api/v1/dashboard/skills');
+}
+export const callFetchLevels = () => {
+    return axios.get('/api/v1/dashboard/levels');
 }

@@ -1,13 +1,14 @@
 import { Card, Col, Row, Statistic } from "antd";
 import CountUp from "react-countup";
-import Page from "../dashboard/Page";
 import DemoPie from "../dashboard/DemoPie";
 import { useEffect, useState } from "react";
-import { callFetchPie, callFetchSummary } from "@/config/api";
+import { callFetchLevels, callFetchPie, callFetchSummary } from "@/config/api";
+import DemoBar from "../dashboard/DemoBar";
 
 const DashboardPage = () => {
   const [dataCardDashBoard, setdataCardDashBoard] = useState<any>();
   const [dataPie, setdataPie] = useState<any>();
+  const [dataBar, setdataBar] = useState<any>();
   const formatter = (value: number | string) => {
     return <CountUp end={Number(value)} separator="," />;
   };
@@ -15,6 +16,12 @@ const DashboardPage = () => {
     const res = await callFetchSummary();
     if (res && res.data) {
       setdataCardDashBoard(res.data);
+    }
+  };
+  const fetchDashBoardDataBar = async () => {
+    const res = await callFetchLevels();
+    if (res && res.data) {
+      setdataBar(res.data);
     }
   };
   const fetchDashBoardDataPie = async () => {
@@ -29,6 +36,7 @@ const DashboardPage = () => {
   useEffect(() => {
     fetchDashBoardData();
     fetchDashBoardDataPie();
+    fetchDashBoardDataBar();
     return () => {};
   }, []);
 
@@ -63,7 +71,7 @@ const DashboardPage = () => {
       </Col>
       <Row gutter={[20, 20]}>
         <Col>
-          <Page />
+          <DemoBar data={dataBar} />
         </Col>
         <Col>
           <DemoPie data={dataPie} />

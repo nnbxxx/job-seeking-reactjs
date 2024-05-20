@@ -53,14 +53,14 @@ const JobCard = (props: IProps) => {
     //   query += `&${sortQuery}`;
     // }
 
-    // if (location?.length && location.length > 0) {
-    //   query += `&location=`;
-    //   let Query = ``;
-    //   location.forEach((s) => {
-    //     Query += s + ",";
-    //   });
-    //   query += Query;
-    // }
+    if (location?.length && location.length > 0) {
+      query += `&location=`;
+      let Query = ``;
+      location.forEach((s) => {
+        Query += s + ",";
+      });
+      query += Query;
+    }
     let res;
     if (skill && skill?.length > 0) {
       res = await callFetchJobClient(query, { skills: skill });
@@ -70,7 +70,6 @@ const JobCard = (props: IProps) => {
     if (res && res.data) {
       setDisplayJob(res.data.result);
       setTotal(res.data.meta.total);
-
     }
     setIsLoading(false);
   };
@@ -95,7 +94,9 @@ const JobCard = (props: IProps) => {
 
   return (
     <div>
-      <div className={`${styles["card-job-section"]} ${styles["top-employers-container"]}`}>
+      <div
+        className={`${styles["card-job-section"]} ${styles["top-employers-container"]}`}
+      >
         <div className={`${styles["job-content"]}`}>
           <Spin spinning={isLoading} tip="Loading...">
             <Row gutter={[20, 20]}>

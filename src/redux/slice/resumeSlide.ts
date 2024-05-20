@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { callFetchJob, callFetchResume } from '@/config/api';
+import { callFetchJob, callFetchResume, callFetchResumeAdmin } from '@/config/api';
 import { IResume } from '@/types/backend';
 
 interface IState {
@@ -16,7 +16,7 @@ interface IState {
 export const fetchResume = createAsyncThunk(
     'resume/fetchResume',
     async ({ query }: { query: string }) => {
-        const response = await callFetchResume(query);
+        const response = await callFetchResumeAdmin(query);
         return response;
     }
 )
