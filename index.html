@@ -1,15 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/job-seeking-reactjs/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
-    <script type="module" crossorigin src="/job-seeking-reactjs/assets/index-59d82ab2.js"></script>
-    <link rel="stylesheet" href="/job-seeking-reactjs/assets/index-2d0eab34.css">
-  </head>
-  <body>
-    <div id="root"></div>
-    
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/job-seeking-reactjs/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite + React + TS</title>
+  <script type="module" crossorigin src="/job-seeking-reactjs/assets/index-59d82ab2.js"></script>
+  <link rel="stylesheet" href="/job-seeking-reactjs/assets/index-2d0eab34.css">
+</head>
+
+<body>
+  <div id="root"></div>
+  <script>
+    var chatbox = document.getElementById('fb-customer-chat');
+    chatbox.setAttribute('page_id', "100012643804363");
+    chatbox.setAttribute('attribution', "biz_inbox");
+  </script>
+
+  <script>
+    window.fbAsyncInit = function () {
+      FB.init({
+        xfbml: true,
+        version: 'v14.0'
+      });
+      (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js'
+        fjs.parentNode.insertBefore(js, fjs);
+
+      }(document, 'script', 'facebook-jssdk'))
+    }
+  </script>
+  
+</body>
+
 </html>
