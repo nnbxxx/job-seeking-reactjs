@@ -5,7 +5,7 @@ import { IUser } from "@/types/backend";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from "@ant-design/pro-components";
 import { Button, Popconfirm, Space, message, notification } from "antd";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
 import { callDeleteUser } from "@/config/api";
 import queryString from "query-string";
@@ -13,11 +13,13 @@ import ModalUser from "@/components/admin/user/modal.user";
 import ViewDetailUser from "@/components/admin/user/view.user";
 import Access from "@/components/share/access";
 import { ALL_PERMISSIONS } from "@/config/permissions";
+import { TbDatabaseExport, TbDatabaseImport } from "react-icons/tb";
+import { CSVLink } from "react-csv";
 
 const UserPage = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [dataInit, setDataInit] = useState<any>(null);
-
+  const [dataCsv, setDataCsv] = useState<any>();
   const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
 
   const tableRef = useRef<ActionType>();
@@ -25,8 +27,32 @@ const UserPage = () => {
   const isFetching = useAppSelector((state) => state.user.isFetching);
   const meta = useAppSelector((state) => state.user.meta);
   const users = useAppSelector((state) => state.user.result);
+  console.log("🚀 ~ UserPage ~ users:", users);
   const dispatch = useAppDispatch();
+  const handleChangeData = () => {
+    let result = [];
+    result = users.map((item: any) => {
+      return {
+        _id: item._id,
+        createdAt: dayjs(item.createdAt).format("DD-MM-YYYY HH:mm:ss"),
+        updatedAt: dayjs(item.updatedAt).format("DD-MM-YYYY HH:mm:ss"),
+        name: item.name,
+        address: item.address,
+        age: item.age,
+        email: item.email,
+        gender: item.gender,
+        role: item.role.name,
+      };
+    });
 
+    setDataCsv(result);
+  };
+
+  useEffect(() => {
+    handleChangeData();
+
+    return () => {};
+  }, [users]);
   const handleDeleteUser = async (_id: string | undefined) => {
     if (_id) {
       const res = await callDeleteUser(_id);
@@ -206,13 +232,34 @@ const UserPage = () => {
           rowSelection={false}
           toolBarRender={(_action, _rows): any => {
             return (
-              <Button
-                icon={<PlusOutlined />}
-                type="primary"
-                onClick={() => setOpenModal(true)}
-              >
-                Thêm mới
-              </Button>
+              <>
+                <Button
+                  icon={<TbDatabaseExport />}
+                  type="primary"
+                  onClick={() => {}}
+                >
+                  <CSVLink
+                    data={dataCsv && dataCsv.length > 0 ? dataCsv : []}
+                    target="_blank"
+                  >
+                    Export CSV File
+                  </CSVLink>
+                </Button>
+                <Button
+                  icon={<TbDatabaseImport />}
+                  type="primary"
+                  onClick={() => {}}
+                >
+                  Import CSV File
+                </Button>
+                <Button
+                  icon={<PlusOutlined />}
+                  type="primary"
+                  onClick={() => setOpenModal(true)}
+                >
+                  Thêm mới
+                </Button>
+              </>
             );
           }}
         />

@@ -16,7 +16,7 @@ import {
   message,
   notification,
 } from "antd";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
 
 import queryString from "query-string";
@@ -29,17 +29,44 @@ import ModalSkill from "@/components/admin/skill/modal.skill";
 import { callDeleteSkill, callDeleteSubscriber } from "@/config/api";
 import { fetchSubscriber } from "@/redux/slice/subscriberSlide";
 import ViewDetailSubscriber from "@/components/admin/subscriber/view.subscriber";
+import { TbDatabaseExport } from "react-icons/tb";
+import { CSVLink, CSVDownload } from "react-csv";
 
 const SubscriberPage = () => {
   const tableRef = useRef<ActionType>();
+  const [dataCsv, setDataCsv] = useState<any>();
 
   const isFetching = useAppSelector((state) => state.subscriber.isFetching);
   const meta = useAppSelector((state) => state.subscriber.meta);
   const subscribers = useAppSelector((state) => state.subscriber.result);
+
   const dispatch = useAppDispatch();
   const reloadTable = () => {
     tableRef?.current?.reload();
   };
+
+  const handleChangeData = () => {
+    let result = [];
+    result = subscribers.map((item: any) => {
+      return {
+        _id: item._id,
+        email: item.createdBy.email,
+        name: item.user.name,
+        createAt: dayjs(item.createdAt).format("DD-MM-YYYY HH:mm:ss"),
+        updatedAt: dayjs(item.updatedAt).format("DD-MM-YYYY HH:mm:ss"),
+        skills: item.skills.map((skill: any) => skill.name).join(" || "),
+      };
+    });
+
+    setDataCsv(result);
+  };
+
+  useEffect(() => {
+    handleChangeData();
+
+    return () => {};
+  }, [subscribers]);
+
   const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
   const [dataInit, setDataInit] = useState<null | ISubscribers>(null);
   const columns: ProColumns<ISubscribers>[] = [
@@ -212,6 +239,24 @@ const SubscriberPage = () => {
             },
           }}
           rowSelection={false}
+          toolBarRender={(_action, _rows): any => {
+            return (
+              <>
+                <Button
+                  icon={<TbDatabaseExport />}
+                  type="primary"
+                  onClick={() => {}}
+                >
+                  <CSVLink
+                    data={dataCsv && dataCsv.length > 0 ? dataCsv : []}
+                    target="_blank"
+                  >
+                    Export CSV File
+                  </CSVLink>
+                </Button>
+              </>
+            );
+          }}
         />
       </Access>
       {/* <ModalSkill

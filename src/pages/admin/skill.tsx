@@ -16,7 +16,7 @@ import {
   message,
   notification,
 } from "antd";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
 
 import queryString from "query-string";
@@ -27,10 +27,12 @@ import Access from "@/components/share/access";
 import { fetchSkill } from "@/redux/slice/skillSlide";
 import ModalSkill from "@/components/admin/skill/modal.skill";
 import { callDeleteSkill } from "@/config/api";
+import { TbDatabaseExport, TbDatabaseImport } from "react-icons/tb";
+import { CSVLink } from "react-csv";
 
 const SkillPage = () => {
   const tableRef = useRef<ActionType>();
-
+  const [dataCsv, setDataCsv] = useState<any>();
   const isFetching = useAppSelector((state) => state.skill.isFetching);
   const meta = useAppSelector((state) => state.skill.meta);
   const skills = useAppSelector((state) => state.skill.result);
@@ -169,6 +171,30 @@ const SkillPage = () => {
       }
     }
   };
+
+  const handleChangeData = () => {
+    let result = [];
+    result = skills.map((item: any) => {
+      return {
+        _id: item._id,
+        createdAt: dayjs(item.createdAt).format("DD-MM-YYYY HH:mm:ss"),
+        createdBy: item.createdBy.email,
+        updatedAt: dayjs(item.updatedAt).format("DD-MM-YYYY HH:mm:ss"),
+        updatedBy:
+          item.updatedBy && item.updatedBy.email ? item.updatedBy.email : " ",
+        name: item.name,
+        description: item.description,
+      };
+    });
+
+    setDataCsv(result);
+  };
+
+  useEffect(() => {
+    handleChangeData();
+
+    return () => {};
+  }, [skills]);
   return (
     <div>
       <Access permission={ALL_PERMISSIONS.SKILLS.GET_PAGINATE}>
@@ -202,15 +228,34 @@ const SkillPage = () => {
           toolBarRender={(_action, _rows): any => {
             return (
               <Access permission={ALL_PERMISSIONS.SKILLS.CREATE} hideChildren>
-                <Button
-                  icon={<PlusOutlined />}
-                  type="primary"
-                  onClick={() => {
-                    setOpenModal(true);
-                  }}
-                >
-                  Thêm mới
-                </Button>
+                <>
+                  <Button
+                    icon={<TbDatabaseExport />}
+                    type="primary"
+                    onClick={() => {}}
+                  >
+                    <CSVLink
+                      data={dataCsv && dataCsv.length > 0 ? dataCsv : []}
+                      target="_blank"
+                    >
+                      Export CSV File
+                    </CSVLink>
+                  </Button>
+                  <Button
+                    icon={<TbDatabaseImport />}
+                    type="primary"
+                    onClick={() => {}}
+                  >
+                    Import CSV File
+                  </Button>
+                  <Button
+                    icon={<PlusOutlined />}
+                    type="primary"
+                    onClick={() => setOpenModal(true)}
+                  >
+                    Thêm mới
+                  </Button>
+                </>
               </Access>
             );
           }}
