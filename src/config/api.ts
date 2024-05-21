@@ -12,7 +12,19 @@ export const callRegister = (name: string, email: string, password: string, age:
 export const callLogin = (username: string, password: string) => {
     return axios.post<IBackendRes<IAccount>>('/api/v1/auth/login', { username, password })
 }
-
+export const callLoginGoogle = (
+    name: string,
+    username: string,
+    password: string,
+    email: string
+) => {
+    return axios.post<IBackendRes<IAccount>>("/api/v1/auth/login-google", {
+        username,
+        password,
+        name,
+        email,
+    });
+};
 export const callFetchAccount = () => {
     return axios.get<IBackendRes<IGetAccount>>('/api/v1/auth/account')
 }
@@ -125,6 +137,9 @@ export const callDeleteJob = (id: string) => {
 
 export const callFetchJob = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IJob>>>(`/api/v1/jobs?${query}`);
+}
+export const callFetchJobAdmin = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IJob>>>(`/api/v1/jobs/manager?${query}`);
 }
 export const callFetchJobClient = (query: string, job: any) => {
     return axios.post(`/api/v1/jobs/new?${query}`, { ...job });

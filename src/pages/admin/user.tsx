@@ -245,13 +245,13 @@ const UserPage = () => {
                     Export CSV File
                   </CSVLink>
                 </Button>
-                <Button
+                {/* <Button
                   icon={<TbDatabaseImport />}
                   type="primary"
                   onClick={() => {}}
                 >
                   Import CSV File
-                </Button>
+                </Button> */}
                 <Button
                   icon={<PlusOutlined />}
                   type="primary"

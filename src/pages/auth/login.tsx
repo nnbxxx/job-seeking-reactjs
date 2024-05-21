@@ -1,12 +1,14 @@
 import { Button, Divider, Form, Input, message, notification } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { callLogin } from "config/api";
+import { callLogin, callLoginGoogle } from "config/api";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setUserLoginInfo } from "@/redux/slice/accountSlide";
 import styles from "styles/auth.module.scss";
 import { useAppSelector } from "@/redux/hooks";
 import video_bg from "../../../public/video_bg.mp4";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 const LoginPage = () => {
   const navigate = useNavigate();
   const [isSubmit, setIsSubmit] = useState(false);
@@ -48,6 +50,42 @@ const LoginPage = () => {
       });
     }
   };
+  const loginGoogle = useGoogleLogin({
+    onSuccess: async (data) => {
+      const response = await axios.get(
+        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${data.access_token}`,
+        {
+          headers: {
+            Authorization: `Bearer ${data.access_token}`,
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const res = await callLoginGoogle(
+        response.data.name,
+        response.data.name,
+        "logingoogle",
+        response.data.email
+      );
+
+      if (res?.data) {
+        localStorage.setItem("access_token", res.data.access_token);
+        dispatch(setUserLoginInfo(res.data.user));
+        message.success("Đăng nhập tài khoản thành công!");
+        window.location.href = callback ? callback : "/";
+      } else {
+        notification.error({
+          message: "Có lỗi xảy ra",
+          description:
+            res.message && Array.isArray(res.message)
+              ? res.message[0]
+              : res.message,
+          duration: 5,
+        });
+      }
+    },
+  });
 
   return (
     <div className={styles["login-page"]}>
@@ -153,6 +191,19 @@ const LoginPage = () => {
                 </Button>
               </Form.Item>
               <Divider style={{ color: "white" }}>Or</Divider>
+              <Button
+                danger
+                type="primary"
+                onClick={() => loginGoogle()}
+                style={{
+                  borderRadius: "20px",
+                  width: "100%",
+                  paddingTop: "4px",
+                  paddingBottom: "4px",
+                }}
+              >
+                Đăng nhập Google
+              </Button>
               <p className="text text-normal" style={{ color: "white" }}>
                 Chưa có tài khoản ?
                 <span>
